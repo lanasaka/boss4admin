@@ -113,7 +113,7 @@ const NewApp = () => {
         console.error('Error fetching programs:', error);
       });
   };
-  const handleUniversityChange = (e) => {
+    const handleUniversityChange = (e) => {
     const universityId = e.target.value;
     const selectedUniversity = universities.find(university => university.id === parseInt(universityId));
     const universityName = selectedUniversity ? selectedUniversity.name : ''; // Get the name of the selected university
@@ -129,10 +129,11 @@ const NewApp = () => {
     const { value } = e.target;
     setFormData({
       ...formData,
-      name: value
+      name: value.toUpperCase()
     });
   };
   
+
   const handlePassportNumberChange = (e) => {
     const { value } = e.target;
     setFormData({
@@ -232,7 +233,7 @@ const NewApp = () => {
               <h4 className="card-title">Personal Information</h4>
               <Form>
                 <FormGroup>
-                  <Label for="name">Students Name<span style={{ color: 'red' }}>*</span></Label>
+                  <Label for="name">Student First Name + Father Name + Last Name<span style={{ color: 'red' }}>*</span></Label>
                   <Input
                     type="text"
                     id="firstName"

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Container, Table, Button, Input } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -9,9 +10,8 @@ const AdminShowApps = () => {
 
   const fetchApplications = async () => {
     try {
-      const response = await fetch('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/admin/applications');
-      const data = await response.json();
-      setApplications(data);
+      const response = await axios.get('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/admin/applications');
+      setApplications(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Error fetching applications. Please try again later.');
@@ -24,10 +24,8 @@ const AdminShowApps = () => {
 
   const deleteApplication = async (id) => {
     try {
-      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${id}`, {
-        method: 'DELETE'
-      });
-      if (response.ok) {
+      const response = await axios.delete(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${id}`);
+      if (response.status === 200) {
         fetchApplications();
         toast.success('Application deleted successfully');
       } else {
@@ -40,7 +38,7 @@ const AdminShowApps = () => {
   };
 
   const getButtonConfig = (application) => {
-    switch (application.type) {
+    switch (application.appType) {
       case 'new':
         return { text: 'New', color: 'secondary' };
       case 'waiting':

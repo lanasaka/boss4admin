@@ -73,7 +73,7 @@ const [selectedType, setSelectedType] = useState('');
         const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${appId}`);
         const data = await response.json();
         setApplication(data);
-        setSelectedType(data.type); // Set the initial application type
+        setSelectedType(data.appType || ''); // Set the initial selected type
         setName(data.name || '');
         setPassportNumber(data.passportNumber || '');
         setEmail(data.email || ''); 
@@ -160,21 +160,20 @@ const [selectedType, setSelectedType] = useState('');
   const handleTypeChange = (e) => {
     const newType = e.target.value;
     setSelectedType(newType);
-    setApplication({ ...application, type: newType });
+    setApplication({ ...application, appType: newType });
   };
-  
   const handleSave = async () => {
     const payload = {
-      name: Name,
-      passportNumber: PassportNumber,
-      email: email,
-      phoneNumber: phoneNumber,
-      nationality: nationality,
-      countryResidence: countryResidence,
-      type: selectedType,
-      academicDegree: academicDegree,
-      semester: semester,
-      extraFileName: extraFileName
+      name: application.name,
+      passportNumber: application.passportNumber,
+      email: application.email,
+      phoneNumber: application.phoneNumber,
+      nationality: application.nationality,
+      countryResidence: application.countryResidence,
+      appType: selectedType, // Use the new appType field
+      academicDegree: application.academicDegree,
+      semester: application.semester,
+      extraFileName: application.extraFileName,
     };
   
     try {
@@ -186,7 +185,7 @@ const [selectedType, setSelectedType] = useState('');
     }
   
     // Upload documents if necessary
-    if (isOfferLetterUploaded || isAcceptanceLetterUploaded || isReceiptUploaded) {
+    if (offerLetter || acceptanceLetter || receipt) {
       const formData = new FormData();
       if (offerLetter) formData.append('offerLetter', offerLetter);
       if (acceptanceLetter) formData.append('acceptanceLetter', acceptanceLetter);
@@ -196,13 +195,16 @@ const [selectedType, setSelectedType] = useState('');
         await axios.put(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${appId}/documents`, formData);
         setSuccess(true);
         setError(null);
+        toast.success('Documents uploaded successfully');
       } catch (error) {
         console.error('Error:', error);
         setError('Failed to save documents');
         setSuccess(false);
+        toast.error('Failed to save documents');
       }
     }
   };
+  
   
   
   const downloadDocument = async (documentName) => {
@@ -518,7 +520,6 @@ const [selectedType, setSelectedType] = useState('');
                     <option value="acceptance">Acceptance</option>
                     <option value="rejected">Rejected</option>
                     <option value="complete">Complete</option>
-                   
                   </Input>
                 </FormGroup>
     </Form>
