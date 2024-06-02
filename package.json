@@ -2,7 +2,7 @@
   "name": "@coreui/coreui-free-react-admin-template",
   "version": "4.5.0",
   "description": "Boss4 Education",
-  "homepage": "localhost",
+  "homepage": ".",
   "bugs": {
     "url": "https://github.com/coreui/coreui-free-react-admin-template/issues"
   },
