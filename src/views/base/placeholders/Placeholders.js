@@ -43,20 +43,8 @@ const Placeholders = () => {
                   </CCardBody>
                 </CCard>
                 <CCard style={{ width: '18rem' }}>
-                  <CCardImage
-                    component="svg"
-                    orientation="top"
-                    width="100%"
-                    height="162"
-                    xmlns="http://www.w3.org/2000/svg"
-                    role="img"
-                    aria-label="Placeholder"
-                    preserveAspectRatio="xMidYMid slice"
-                    focusable="false"
-                  >
-                    <title>Placeholder</title>
-                    <rect width="100%" height="100%" fill="#868e96"></rect>
-                  </CCardImage>
+               
+              
                   <CCardBody>
                     <CPlaceholder component={CCardTitle} animation="glow" xs={7}>
                       <CPlaceholder xs={6} />
