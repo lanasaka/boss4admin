@@ -26,7 +26,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    if (username === 'admin' && password === '123') {
+    if (username === 'adminBoss4' && password === 'boss4eduadmin123') {
       // Assuming successful login, navigate to default layout
       navigate('/dashboard');
     } else {
