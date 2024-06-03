@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -21,16 +21,14 @@ import logo from '../../../assets/Boss4 Student logo_1.png';
 
 const Login = () => {
   const navigate = useNavigate();
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
     if (username === 'adminBoss4' && password === 'boss4eduadmin123') {
-      // Assuming successful login, navigate to default layout
+      localStorage.setItem('user', JSON.stringify({ username }));
       navigate('/dashboard');
     } else {
-      // Display error message
       toast.error('Incorrect username or password');
     }
   };
@@ -78,15 +76,14 @@ const Login = () => {
                         >
                           Login
                         </CButton>
-                      </CCol> 
+                      </CCol>
                       <CCol xs={6} className="text-right">
-                  
+                        {/* Optional content for the right column */}
                       </CCol>
                     </CRow>
                   </CForm>
                 </CCardBody>
               </CCard>
-
               <CCard
                 className="text-white py-5 d-flex justify-content-center align-items-center"
                 style={{ width: '44%', backgroundColor: '#C8FFBC', height: '350px' }}

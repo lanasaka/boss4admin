@@ -64,23 +64,16 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/users', name: 'Users', element: AddUser, exact: true },
-  { path: '/users/addUser', name: 'Add User', element: AddUser }, // Use the imported AddUser component
-  { path: '/users/showUsers', name: 'Show Users', element: ShowUsers },
- 
-
-  { path: '/apps', name: 'Applications', element: NewApp, exact: true },
-  { path: '/apps/newApp', name: 'New Application', element: NewApp }, // Use the imported AddUser component
+  { path: '/users', name: 'Users', element: AddUser, exact: true },//
+  { path: '/users/addUser', name: 'Add User', element: AddUser }, //
+  { path: '/users/showUsers', name: 'Show Users', element: ShowUsers },//
+  { path: '/apps', name: 'Applications', element: NewApp, exact: true },//
+  { path: '/apps/newApp', name: 'New Application', element: NewApp }, 
   { path: '/apps/showApps', name: 'Show Applications', element: ShowApps },
   { path: '/apps/:appId', name: 'ApplicationDetails', element: ApplicationDetails },
+  { path: '/dashboard', name: 'Dashboard', element: Dashboard },//
 
   { path: '/reports', name: 'Reports', element: Reports },
-
-
-
-
-
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
