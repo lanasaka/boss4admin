@@ -84,6 +84,7 @@ const AdminShowApps = () => {
             <th>Academic Degree</th>
             <th>Program</th>
             <th>Semester</th>
+            <th>User Name</th>
             <th>Application Type</th>
             <th>Actions</th>
           </tr>
@@ -99,6 +100,7 @@ const AdminShowApps = () => {
               <td>{app.academicDegree}</td>
               <td>{app.program}</td>
               <td>{app.semester}</td>
+              <td>{app.userName}</td>
               <td>
                 <Button color={getButtonConfig(app).color} size="md">{getButtonConfig(app).text}</Button>
               </td>
