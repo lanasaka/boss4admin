@@ -25,23 +25,15 @@ class App extends Component {
         <Suspense fallback={loading}>
           <Routes>
             <Route path="/" element={<Login />} />
-         
-              
               <Route path="*" element={<DefaultLayout />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/users" element={<AddUser  />} />
-              <Route path="/users/addUser" element={<AddUser  />} />
-              <Route path="/users/showUsers" element={<ShowUsers />} />
-              <Route path="/apps" element={<NewApp />} />
-              <Route path="/apps/newApp" element={<NewApp />} />
-              <Route path="/apps/showApps" element={<ShowApps />} />
-              <Route path="/apps/:appId" element={<ApplicationDetails/>} />
-             
-            
-              
-              
-  
-           
+              <Route path="*/dashboard" element={<Dashboard />} />
+              <Route path="*/users" element={<AddUser  />} />
+              <Route path="*/users/addUser" element={<AddUser  />} />
+              <Route path="*/users/showUsers" element={<ShowUsers />} />
+              <Route path="*/apps" element={<NewApp />} />
+              <Route path="*/apps/newApp" element={<NewApp />} />
+              <Route path="*/apps/showApps" element={<ShowApps />} />
+              <Route path="*/apps/:appId" element={<ApplicationDetails/>} />
          
           </Routes>
         </Suspense>
