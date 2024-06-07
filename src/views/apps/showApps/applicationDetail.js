@@ -201,19 +201,20 @@ const [receiptUrl, setReceiptUrl] = useState('');
 
   const handleSave = async () => {
     const payload = {
-      name: application.name,
-      passportNumber: application.passportNumber,
-      email: application.email,
-      phoneNumber: application.phoneNumber,
-      nationality: application.nationality,
-      countryResidence: application.countryResidence,
-      type: application.selectedType,
-      academicDegree: application.academicDegree,
-      semester: application.semester,
-      extraFileName: application.extraFileName,
-      appType: application.appType,
+      name: Name,
+      passportNumber: PassportNumber,
+      email: email,
+      phoneNumber: phoneNumber,
+      nationality: nationality,
+      countryResidence: countryResidence,
+      type: selectedType,
+      academicDegree: academicDegree,
+      semester: semester,
+      extraFileName: extraFileName,
+      type:type,
+      appType:appType,
     };
-
+  
     try {
       await axios.put(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${appId}`, payload);
       toast.success('Application updated successfully');
@@ -221,14 +222,14 @@ const [receiptUrl, setReceiptUrl] = useState('');
       console.error('Error:', error);
       toast.error('Failed to update application');
     }
-
+  
     // Upload documents if necessary
-    if (offerLetter || acceptanceLetter || receipt) {
+    if (isOfferLetterUploaded || isAcceptanceLetterUploaded || isReceiptUploaded) {
       const formData = new FormData();
       if (offerLetter) formData.append('offerLetter', offerLetter);
       if (acceptanceLetter) formData.append('acceptanceLetter', acceptanceLetter);
       if (receipt) formData.append('receipt', receipt);
-
+  
       try {
         await axios.put(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${appId}/documents`, formData);
         setSuccess(true);
@@ -499,51 +500,67 @@ const [receiptUrl, setReceiptUrl] = useState('');
         </Col>
         <Col md="4">
            <Card>
-           <CardBody>
-      <h4 className="card-title">University Documents</h4>
-      <Form>
-        <FormGroup>
-          <Label for="offerLetter">Offer Letter</Label>
-          <div className="d-flex align-items-center">
-            <Input
-              type="file"
-              id="offerLetter"
-              onChange={(e) => handleFileChange(e, 'offerLetter')}
-            />
-            <div style={{ marginLeft: '10px' }}>
-              <Button onClick={() => downloadDocument(application?.offerLetter)}>Download</Button>
-            </div>
+  <CardBody>
+    <h4 className="card-title">University Documents</h4>
+    <Form>
+      <FormGroup>
+        <Label for="offerLetter">Offer Letter</Label>
+        <div className="d-flex align-items-center"> {/* Add a container to align items */}
+          <Input
+            type="file"
+            id="offerLetter"
+            onChange={(e) => handleFileChange(e, 'offerLetter')}
+          />
+          <div style={{ marginLeft: '10px' }}> {/* Add margin to create space */}
+            <Button onClick={() => downloadDocument(application?.offerLetter)}>Download </Button>
           </div>
-        </FormGroup>
-        <FormGroup>
-          <Label for="acceptanceLetter">Acceptance Letter</Label>
-          <div className="d-flex align-items-center">
-            <Input
-              type="file"
-              id="acceptanceLetter"
-              onChange={(e) => handleFileChange(e, 'acceptanceLetter')}
-            />
-            <div style={{ marginLeft: '10px' }}>
-              <Button onClick={() => downloadDocument(application?.acceptanceLetter)}>Download</Button>
-            </div>
+        </div>
+      </FormGroup>
+      <FormGroup>
+        <Label for="acceptanceLetter">Acceptance Letter</Label>
+        <div className="d-flex align-items-center"> {/* Add a container to align items */}
+          <Input
+            type="file"
+            id="acceptanceLetter"
+            onChange={(e) => handleFileChange(e, 'acceptanceLetter')}
+          />
+          <div style={{ marginLeft: '10px' }}> {/* Add margin to create space */}
+            <Button onClick={() => downloadDocument(application?.acceptanceLetter)}>Download </Button>
           </div>
-        </FormGroup>
-        <FormGroup>
-          <Label for="receipt">Receipt</Label>
-          <div className="d-flex align-items-center">
-            <Input
-              type="file"
-              id="receipt"
-              onChange={(e) => handleFileChange(e, 'receipt')}
-            />
-            <div style={{ marginLeft: '10px' }}>
-              <Button onClick={() => downloadDocument(application?.receipt)}>Download</Button>
-            </div>
+        </div>
+      </FormGroup>
+      <FormGroup>
+        <Label for="receipt">Receipt</Label>
+        <div className="d-flex align-items-center"> {/* Add a container to align items */}
+          <Input
+            type="file"
+            id="receipt"
+            onChange={(e) => handleFileChange(e, 'receipt')}
+          />
+          <div style={{ marginLeft: '10px' }}> {/* Add margin to create space */}
+            <Button onClick={() => downloadDocument(application?.receipt)}>Download </Button>
           </div>
-        </FormGroup>
-      </Form>
- 
-    </CardBody>
+        </div>
+      </FormGroup>
+    <FormGroup>
+        <Label for="selectedAppType">Application Type</Label>
+        <Input
+          type="select"
+          id="appType"
+          value={appType}
+          onChange={(e) => setAppType(e.target.value)}
+        >
+          <option value="new">New</option>
+          <option value="waiting">Waiting</option>
+          <option value="offer">Offer</option>
+          <option value="payment">Payment</option>
+          <option value="acceptance">Acceptance</option>
+          <option value="rejected">Rejected</option>
+          <option value="complete">Complete</option>
+        </Input>
+      </FormGroup>
+    </Form>
+  </CardBody>
 </Card>
 
           <Button color="primary" onClick={() => handleSave(application._id)}>Save</Button>
