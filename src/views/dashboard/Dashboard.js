@@ -24,8 +24,11 @@ const Dashboard = () => {
     const fetchApplications = async () => {
       try {
         const response = await fetch('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/admin/applications');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
-        setApplications(data);
+        setApplications(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching applications:', error);
       }
@@ -58,8 +61,10 @@ const Dashboard = () => {
       return counts;
     };
 
-    const counts = countStatuses();
-    setStatusCounts(counts);
+    if (Array.isArray(applications)) {
+      const counts = countStatuses();
+      setStatusCounts(counts);
+    }
   }, [applications]);
 
   return (
