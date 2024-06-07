@@ -2,44 +2,48 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Row, Col, Card, CardBody, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import axios from 'axios';
+import Axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ApplicationDetails = () => {
   const { appId } = useParams();
+  const [PassportNumber, setPassportNumber] = useState('');
   const [application, setApplication] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [Name, setName] = useState('');
-const [PassportNumber, setPassportNumber] = useState('');
-
-// State to hold selected application type
-const [selectedType, setSelectedType] = useState('');
-
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [nationality, setNationality] = useState('');
-  
-  const [countryResidence, setCountryResidence] = useState('');
-  const [academicDegree, setAcademicDegree] = useState('');
-  const [universities, setUniversities] = useState([]);
-  const [type, setType] = useState([]);
-  const [semester, setSemester] = useState([]);
-  const [extraFileName, setExtraFileName] = useState('');
-
-  const [programs, setPrograms] = useState([]);
-  const [passportPhoto, setPassportPhoto] = useState(null);
-
-  const [offerLetter, setOfferLetter] = useState(null);
-  const [acceptanceLetter, setAcceptanceLetter] = useState(null);
-  const [receipt, setReceipt] = useState(null);
-  const [offerLetterName, setOfferLetterName] = useState('');
-  const [acceptanceLetterName, setAcceptanceLetterName] = useState('');
-  const [receiptName, setReceiptName] = useState('');
   const [isOfferLetterUploaded, setIsOfferLetterUploaded] = useState(false);
   const [isAcceptanceLetterUploaded, setIsAcceptanceLetterUploaded] = useState(false);
   const [isReceiptUploaded, setIsReceiptUploaded] = useState(false);
+  const [type, setType] = useState('');  // Changed from array to string
+  const [semester, setSemester] = useState('');  // Changed from array to string
+  const [extraFileName, setExtraFileName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [nationality, setNationality] = useState('');
+  const [countryResidence, setCountryResidence] = useState('');
+  const [academicDegree, setAcademicDegree] = useState('');
+  const [universities, setUniversities] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [passportPhoto, setPassportPhoto] = useState(null);
+   const [appType, setAppType] = useState('');
+
+    const [offerLetter, setOfferLetter] = useState(null);
+    const [acceptanceLetter, setAcceptanceLetter] = useState(null);
+    const [receipt, setReceipt] = useState(null);
+    const [offerLetterName, setOfferLetterName] = useState('');
+    const [acceptanceLetterName, setAcceptanceLetterName] = useState('');
+    const [receiptName, setReceiptName] = useState('');
+    const [selectedType, setSelectedType] = useState('');
+    const [offerLetterUrl, setOfferLetterUrl] = useState('');
+const [acceptanceLetterUrl, setAcceptanceLetterUrl] = useState('');
+const [receiptUrl, setReceiptUrl] = useState('');
+
+
+  // Add state variables for other document URLs as needed
+
 
   const [formData, setFormData] = useState({
     name: '',
@@ -65,18 +69,18 @@ const [selectedType, setSelectedType] = useState('');
     acceptanceLetter: null,
     receipt: null
   });
-
- useEffect(() => {
+  
+  useEffect(() => {
     const fetchApplicationDetails = async () => {
       try {
         setLoading(true);
         const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${appId}`);
         const data = await response.json();
         setApplication(data);
-        setSelectedType(data.appType || ''); // Set the initial selected type
         setName(data.name || '');
         setPassportNumber(data.passportNumber || '');
         setEmail(data.email || ''); 
+        setSelectedType(data.type); // Set the initial application type
         setPhoneNumber(data.phoneNumber || ''); 
         setNationality(data.nationality || ''); 
         setCountryResidence(data.countryResidence || ''); 
@@ -84,6 +88,7 @@ const [selectedType, setSelectedType] = useState('');
         setAcademicDegree(data.academicDegree || '');
         setSemester(data.semester || '');
         setExtraFileName(data.extraFileName || '');
+        setAppType(data.appType || '');
 
       } catch (error) {
         setError(error.message);
@@ -93,8 +98,11 @@ const [selectedType, setSelectedType] = useState('');
     };
     fetchApplicationDetails();
   }, [appId]);
-  
-
+  const handleTypeChange = (e) => {
+    const newType = e.target.value;
+    setSelectedType(newType);
+    setApplication({ ...application, appType: newType });
+  };
   const handleInputChange = (e, fieldName) => {
     const { value } = e.target;
     if (fieldName === 'name') {
@@ -121,47 +129,76 @@ const [selectedType, setSelectedType] = useState('');
       setApplication({ ...application, [fieldName]: value });
     }
   };
-  
 
-  const handleFileChange = (e, fileType) => {
+  const fetchUniversities = () => {
+    if (academicDegree) {
+      Axios.get(`https://boss4edu-a37be3e5a8d0.herokuapp.com/${academicDegree}-universities`)
+        .then(response => {
+          setUniversities(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching universities:', error);
+        });
+    }
+  };
+
+  const fetchPrograms = (universityId, academicDegree) => {
+    let programEndpoint;
+    if (academicDegree === 'diploma') {
+      programEndpoint = 'diploma_programs';
+    } else if (academicDegree === 'bachelor') {
+      programEndpoint = 'bachelor_programs';
+    } else if (academicDegree === 'master') {
+      programEndpoint = 'master_programs';
+    } else if (academicDegree === 'phd') {
+      programEndpoint = 'phd_programs';
+    }
+
+    Axios.get(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/universities/${universityId}/${programEndpoint}`)
+      .then(response => {
+        setPrograms(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching programs:', error);
+      });
+  };
+
+
+  useEffect(() => {
+    const fetchApplicationDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${appId}`);
+        const data = await response.json();
+        setApplication(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApplicationDetails();
+  }, [appId]);
+
+  const handleFileChange = (e, type) => {
     const file = e.target.files[0];
     if (file) {
-      const fileName = file.name;
-      // Update state based on the file type
-      if (fileType === 'offerLetter') {
-        setOfferLetter(file);
-        setOfferLetterName(fileName);
-        setIsOfferLetterUploaded(true);
-        // If offer letter uploaded, update application type to 'Offer' unless acceptance letter and receipt are uploaded
-        if (!isAcceptanceLetterUploaded || !isReceiptUploaded) {
-          setApplication({ ...application, type: 'offer' });
-        }
-      } else if (fileType === 'acceptanceLetter') {
-        setAcceptanceLetter(file);
-        setAcceptanceLetterName(fileName);
-        setIsAcceptanceLetterUploaded(true);
-        // If acceptance letter uploaded, update application type to 'Acceptance' unless offer letter and receipt are uploaded
-        if (!isOfferLetterUploaded || !isReceiptUploaded) {
-          setApplication({ ...application, type: 'acceptance' });
-        }
-      } else if (fileType === 'receipt') {
-        setReceipt(file);
-        setReceiptName(fileName);
-        setIsReceiptUploaded(true);
-        // If receipt uploaded, update application type to 'Payment' unless offer letter and acceptance letter are uploaded
-        if (!isOfferLetterUploaded || !isAcceptanceLetterUploaded) {
-          setApplication({ ...application, type: 'payment' });
-        }
+      switch (type) {
+        case 'offerLetter':
+          setOfferLetter(file);
+          break;
+        case 'acceptanceLetter':
+          setAcceptanceLetter(file);
+          break;
+        case 'receipt':
+          setReceipt(file);
+          break;
+        default:
+          break;
       }
     }
   };
-  
-  
-  const handleTypeChange = (e) => {
-    const newType = e.target.value;
-    setSelectedType(newType);
-    setApplication({ ...application, appType: newType });
-  };
+
   const handleSave = async () => {
     const payload = {
       name: application.name,
@@ -170,12 +207,13 @@ const [selectedType, setSelectedType] = useState('');
       phoneNumber: application.phoneNumber,
       nationality: application.nationality,
       countryResidence: application.countryResidence,
-      appType: selectedType, // Use the new appType field
+      type: application.selectedType,
       academicDegree: application.academicDegree,
       semester: application.semester,
       extraFileName: application.extraFileName,
+      appType: application.appType,
     };
-  
+
     try {
       await axios.put(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${appId}`, payload);
       toast.success('Application updated successfully');
@@ -183,36 +221,32 @@ const [selectedType, setSelectedType] = useState('');
       console.error('Error:', error);
       toast.error('Failed to update application');
     }
-  
+
     // Upload documents if necessary
     if (offerLetter || acceptanceLetter || receipt) {
       const formData = new FormData();
       if (offerLetter) formData.append('offerLetter', offerLetter);
       if (acceptanceLetter) formData.append('acceptanceLetter', acceptanceLetter);
       if (receipt) formData.append('receipt', receipt);
-  
+
       try {
         await axios.put(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${appId}/documents`, formData);
         setSuccess(true);
         setError(null);
-        toast.success('Documents uploaded successfully');
       } catch (error) {
         console.error('Error:', error);
         setError('Failed to save documents');
         setSuccess(false);
-        toast.error('Failed to save documents');
       }
     }
   };
   
-  
-  
   const downloadDocument = async (documentName) => {
-    if (documentName) {
+    if (documentName && documentName !== 'null') {
       try {
         const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/download/${documentName}`);
         const blob = await response.blob();
-        const url = window.URL.createObjectURL(new Blob([blob]));
+        const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', documentName);
@@ -235,6 +269,10 @@ const [selectedType, setSelectedType] = useState('');
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+
+
+  
   
   return (
     <Container>
@@ -247,37 +285,32 @@ const [selectedType, setSelectedType] = useState('');
                 <FormGroup>
                   <Label for="name">Students Name<span style={{ color: 'red' }}>*</span></Label>
                   <Input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Enter student's name"
-                  value={Name} // Bind to the Name state
-                  onChange={(e) => handleInputChange(e, 'name')} // Update the Name state
-                />
-
+                    type="text"
+                    id="firstName"
+                    placeholder="Enter student's name"
+                    value={Name}
+                    onChange={(e) => handleInputChange(e, 'name')}
+                  />
                 </FormGroup>
-                 <FormGroup>
+                <FormGroup>
                   <Label for="passportNumber">Passport Number <span style={{ color: 'red' }}>*</span></Label>
-                <Input
-                  type="text"
-                  id="passportNumber"
-                  placeholder="Enter passport number"
-                  value={PassportNumber}
-                  onChange={(e) => handleInputChange(e, 'passportNumber')} // Ensure this line is correct
-                />
-
+                  <Input
+                      type="text"
+                      id="passportNumber"
+                      placeholder="Enter passport number"
+                      value={PassportNumber}
+                      onChange={(e) => handleInputChange(e, 'passportNumber')}
+                    />
                 </FormGroup>
-
-               
                 <FormGroup>
                   <Label for="email">Email <span style={{ color: 'red' }}>*</span></Label>
-              <Input
-                type="email"
-                id="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => handleInputChange(e, 'email')}
-              />
+                  <Input
+                  type="email"
+                  id="email"
+                  placeholder="Enter email"
+                  value={email}
+                  onChange={(e) => handleInputChange(e, 'email')}
+                />
                 </FormGroup>
                 <FormGroup>
                   <Label for="phoneNumber">Phone Number <span style={{ color: 'red' }}>*</span></Label>
@@ -285,7 +318,7 @@ const [selectedType, setSelectedType] = useState('');
                     type="tel"
                     id="phoneNumber"
                     placeholder="Enter phone number"
-                    value={phoneNumber}
+                    value={application?.phoneNumber || ''}
                   onChange={(e) => handleInputChange(e, 'phoneNumber')}
                   />
                 </FormGroup>
@@ -323,19 +356,18 @@ const [selectedType, setSelectedType] = useState('');
               <Form>
 
               <FormGroup>
-  <Label for="type">Student Type <span style={{ color: 'red' }}>*</span></Label>
-  <Input
-    type="select"
-    id="type"
-    value={type}
-    onChange={(e) => handleInputChange(e, 'type')}
-  >
-    <option value="">Select Student type</option>
-    <option value="newStudent">New Student</option>
-    <option value="transferStudent">Transfer Student</option>
-  </Input>
-</FormGroup>
-
+              <Label for="type">Student Type <span style={{ color: 'red' }}>*</span></Label>
+              <Input
+                type="select"
+                id="type"
+                value={type}
+                  onChange={(e) => handleInputChange(e, 'type')}
+              >
+                <option value="">Select Student type</option>
+                <option value="newStudent">New Student</option>
+                <option value="transferStudent">Transfer Student</option>
+              </Input>
+            </FormGroup>
 
             <FormGroup>
             <Label for="academicDegree">Academic Degree <span style={{ color: 'red' }}>*</span></Label>
@@ -402,57 +434,61 @@ const [selectedType, setSelectedType] = useState('');
         <Col md="4">
           <Card>
             <CardBody>
-              <h4 className="card-title">Upload Documents</h4>
+              <h4 className="card-title">Check the Documents</h4>
               <Form>
               <FormGroup>
-  <Label for="passportPhoto">Photo of Passport</Label>
-  <div>
-  <Button  onClick={() => downloadDocument(application?.passportPhoto)}>Download </Button>
-  </div>
-</FormGroup>
-<FormGroup>
-  <Label for="personalPhoto">Personal Photo</Label>
-  <div>
-  <Button onClick={() => downloadDocument(application?.personalPhoto)}>Download </Button>
-  </div>
-</FormGroup>
-<FormGroup>
-  <Label for="highSchoolCertificate">High School Certificate</Label>
-  <div>
-  <Button onClick={() => downloadDocument(application?.highSchoolCertificate)}>Download </Button>
-  </div>
-</FormGroup>
-<FormGroup>
-  <Label for="highSchoolCertificateEnglish">High School Certificate in English</Label>
-  <div>
-  <Button onClick={() => downloadDocument(application?.highSchoolCertificateEnglish)}>Download </Button>
-  </div>
-</FormGroup>
-<FormGroup>
-  <Label for="highSchoolTranscript">High School Transcript <span style={{ color: 'red' }}>*</span></Label>
-  <div>
-  <Button onClick={() => downloadDocument(application?.highSchoolTranscript)}>Download </Button>
-  </div>
-</FormGroup>
-<FormGroup>
-  <Label for="highSchoolTranscriptEnglish">High School Transcript in English</Label>
-  <div>
-  <Button onClick={() => downloadDocument(application?.highSchoolTranscriptEnglish)}>Download </Button>
-  </div>
-</FormGroup>
-<FormGroup>
-  <Label for="extraFile">Extra File</Label>
-  <div>
-  <Button onClick={() => downloadDocument(application?.extraFile)}>Download </Button>
-  </div>
-</FormGroup>
+              <Label for="passportPhoto">Photo of Passport</Label>
+              <div>
+          <Button onClick={() => downloadDocument(application?.passportPhoto)}>Download</Button>
+             </div>
+            </FormGroup>
 
+               
+              <FormGroup>
+                <Label for="personalPhoto">Personal Photo</Label>
+                <div>
+          <Button onClick={() => downloadDocument(application?.personalPhoto)}>Download </Button>
+        </div>
+              </FormGroup>
+              <FormGroup>
+              <Label for="highSchoolCertificate">High School Certificate</Label>
+              <div>
+          <Button onClick={() => downloadDocument(application?.highSchoolCertificate)}>Download </Button>
+        </div>
+            </FormGroup>
+
+
+                <FormGroup>
+                  <Label for="highSchoolCertificateEnglish">High School Certificate in English</Label>
+                  <div>
+          <Button onClick={() => downloadDocument(application?.highSchoolCertificateEnglish)}>Download </Button>
+        </div>
+                </FormGroup>
+                <FormGroup>
+                  <Label for="highSchoolTranscript">High School Transcript <span style={{ color: 'red' }}>*</span></Label>
+                  <div>
+          <Button onClick={() => downloadDocument(application?.highSchoolTranscript)}>Download </Button>
+        </div>
+
+                </FormGroup>
+                <FormGroup>
+                  <Label for="highSchoolTranscriptEnglish">High School Transcript in English</Label>
+                  <div>
+          <Button onClick={() => downloadDocument(application?.highSchoolTranscriptEnglish)}>Download</Button>
+        </div>
+                </FormGroup>
+                <FormGroup>
+                  <Label for="extraFile">Extra File</Label>
+                  <div>
+          <Button onClick={() => downloadDocument(application?.extraFile)}>Download</Button>
+        </div>
+                </FormGroup>
                 <FormGroup>
                   <Label for="extraFileName">Extra File Name</Label>
                   <Input
                     type="text"
                     id="extraFileName"
-                    value={extraFileName }
+                    value={extraFileName}
                       onChange={(e) => handleInputChange(e, 'extraFileName')}
                    
                   />
@@ -462,68 +498,52 @@ const [selectedType, setSelectedType] = useState('');
           </Card>
         </Col>
         <Col md="4">
-        <Card>
-  <CardBody>
-    <h4 className="card-title">University Documents</h4>
-    <Form>
-      <FormGroup>
-        <Label for="offerLetter">Offer Letter</Label>
-        <div className="d-flex align-items-center"> {/* Add a container to align items */}
-          <Input
-            type="file"
-            id="offerLetter"
-            onChange={(e) => handleFileChange(e, 'offerLetter')}
-          />
-          <div style={{ marginLeft: '10px' }}> {/* Add margin to create space */}
-            <Button onClick={() => downloadDocument(application?.offerLetter)}>Download </Button>
+           <Card>
+           <CardBody>
+      <h4 className="card-title">University Documents</h4>
+      <Form>
+        <FormGroup>
+          <Label for="offerLetter">Offer Letter</Label>
+          <div className="d-flex align-items-center">
+            <Input
+              type="file"
+              id="offerLetter"
+              onChange={(e) => handleFileChange(e, 'offerLetter')}
+            />
+            <div style={{ marginLeft: '10px' }}>
+              <Button onClick={() => downloadDocument(application?.offerLetter)}>Download</Button>
+            </div>
           </div>
-        </div>
-      </FormGroup>
-      <FormGroup>
-        <Label for="acceptanceLetter">Acceptance Letter</Label>
-        <div className="d-flex align-items-center"> {/* Add a container to align items */}
-          <Input
-            type="file"
-            id="acceptanceLetter"
-            onChange={(e) => handleFileChange(e, 'acceptanceLetter')}
-          />
-          <div style={{ marginLeft: '10px' }}> {/* Add margin to create space */}
-            <Button onClick={() => downloadDocument(application?.acceptanceLetter)}>Download </Button>
+        </FormGroup>
+        <FormGroup>
+          <Label for="acceptanceLetter">Acceptance Letter</Label>
+          <div className="d-flex align-items-center">
+            <Input
+              type="file"
+              id="acceptanceLetter"
+              onChange={(e) => handleFileChange(e, 'acceptanceLetter')}
+            />
+            <div style={{ marginLeft: '10px' }}>
+              <Button onClick={() => downloadDocument(application?.acceptanceLetter)}>Download</Button>
+            </div>
           </div>
-        </div>
-      </FormGroup>
-      <FormGroup>
-        <Label for="receipt">Receipt</Label>
-        <div className="d-flex align-items-center"> {/* Add a container to align items */}
-          <Input
-            type="file"
-            id="receipt"
-            onChange={(e) => handleFileChange(e, 'receipt')}
-          />
-          <div style={{ marginLeft: '10px' }}> {/* Add margin to create space */}
-            <Button onClick={() => downloadDocument(application?.receipt)}>Download </Button>
+        </FormGroup>
+        <FormGroup>
+          <Label for="receipt">Receipt</Label>
+          <div className="d-flex align-items-center">
+            <Input
+              type="file"
+              id="receipt"
+              onChange={(e) => handleFileChange(e, 'receipt')}
+            />
+            <div style={{ marginLeft: '10px' }}>
+              <Button onClick={() => downloadDocument(application?.receipt)}>Download</Button>
+            </div>
           </div>
-        </div>
-      </FormGroup>
-      <FormGroup>
-                  <Label for="selectedType">Application Type</Label>
-                  <Input 
-                    type="select" 
-                    id="selectedType" 
-                    value={selectedType} 
-                    onChange={handleTypeChange}
-                  >
-                    <option value="new">New</option>
-                    <option value="waiting">Waiting</option>
-                    <option value="offer">Offer</option>
-                    <option value="payment">Payment</option>
-                    <option value="acceptance">Acceptance</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="complete">Complete</option>
-                  </Input>
-                </FormGroup>
-    </Form>
-  </CardBody>
+        </FormGroup>
+      </Form>
+ 
+    </CardBody>
 </Card>
 
           <Button color="primary" onClick={() => handleSave(application._id)}>Save</Button>
