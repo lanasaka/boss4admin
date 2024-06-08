@@ -186,19 +186,22 @@ const [receiptUrl, setReceiptUrl] = useState('');
       switch (type) {
         case 'offerLetter':
           setOfferLetter(file);
+          setIsOfferLetterUploaded(true); // Set the corresponding state variable
           break;
         case 'acceptanceLetter':
           setAcceptanceLetter(file);
+          setIsAcceptanceLetterUploaded(true); // Set the corresponding state variable
           break;
         case 'receipt':
           setReceipt(file);
+          setIsReceiptUploaded(true); // Set the corresponding state variable
           break;
         default:
           break;
       }
     }
   };
-
+  
   const handleSave = async () => {
     const payload = {
       name: Name,
@@ -211,8 +214,7 @@ const [receiptUrl, setReceiptUrl] = useState('');
       academicDegree: academicDegree,
       semester: semester,
       extraFileName: extraFileName,
-      type:type,
-      appType:appType,
+      appType: appType,
     };
   
     try {
@@ -241,6 +243,7 @@ const [receiptUrl, setReceiptUrl] = useState('');
       }
     }
   };
+  
   
   const downloadDocument = async (documentName) => {
     if (documentName && documentName !== 'null') {
