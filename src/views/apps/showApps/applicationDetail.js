@@ -58,8 +58,8 @@ const ApplicationDetails = () => {
   };
   
   const uploadExtraFile = async () => {
-    if (!otherFile || !otherFileName) {
-      toast.error('Please select a file and enter a file name.');
+    if (!otherFile) {
+      toast.error('Please select a file.');
       return;
     }
   
@@ -74,19 +74,19 @@ const ApplicationDetails = () => {
         body: formData,
       });
       if (!response.ok) {
-        throw new Error('Failed to upload extra file.');
+        throw new Error('Failed to upload file.');
       }
   
-      toast.success('Extra file uploaded successfully.');
+      toast.success('File uploaded successfully.');
       fetchFiles(); // Refresh file list
     } catch (error) {
-      console.error('Error uploading extra file:', error);
-      toast.error('Error uploading extra file. Please try again later.');
+      console.error('Error uploading file:', error);
+      toast.error('Error uploading file. Please try again later.');
     }
   };
   const fetchFiles = async () => {
     try {
-      const response = await fetch(`https://boss4edu.com/api/extra-files/${appId}`);
+      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/extra-files/${appId}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to fetch extra files');
@@ -442,10 +442,7 @@ const ApplicationDetails = () => {
                         <Label for="type">Semester:</Label>
                         <p>{semester}</p>
                       </FormGroup>
-                      <FormGroup>
-                        <Label for="appType">Application Type:</Label>
-                      
-                      </FormGroup>
+                    
                       <FormGroup>
                       <Label for="appType">Application Type:</Label>
                       <Input
@@ -469,9 +466,9 @@ const ApplicationDetails = () => {
                   </CardBody>
                 </Card>
               </Col>
-              <Col md="6">
-                <ChatComponent /> {/* Add ChatComponent here */}
-              </Col>
+              {/* <Col md="6">
+                <ChatComponent />
+              </Col> */}
             </Row>
           </div>
         );
