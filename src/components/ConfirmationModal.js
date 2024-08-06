@@ -1,32 +1,29 @@
 import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import PropTypes from 'prop-types'; // Import PropTypes
+import {
+  CModal,
+  CModalHeader,
+  CModalBody,
+  CModalFooter,
+  CButton,
+} from '@coreui/react';
 
-const ConfirmationModal = ({ show, onHide, onConfirm, userName }) => {
+const ConfirmationModal = ({ show, onHide, onConfirm, userName, message }) => {
   return (
-    <Modal show={show} onHide={onHide} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Confirmation</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>Are you sure you want to delete {userName}?</Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+    <CModal show={show} onClose={onHide}>
+      <CModalHeader closeButton>Confirm Delete</CModalHeader>
+      <CModalBody>
+        {message || `Are you sure you want to delete ${userName}?`}
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="danger" onClick={onConfirm}>
+          Confirm
+        </CButton>
+        <CButton color="secondary" onClick={onHide}>
           Cancel
-        </Button>
-        <Button variant="danger" onClick={onConfirm}>
-          Delete
-        </Button>
-      </Modal.Footer>
-    </Modal>
+        </CButton>
+      </CModalFooter>
+    </CModal>
   );
-};
-
-// Add prop type validation
-ConfirmationModal.propTypes = {
-  show: PropTypes.bool.isRequired,
-  onHide: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired,
-  userName: PropTypes.string.isRequired, // Add userName prop validation
 };
 
 export default ConfirmationModal;
