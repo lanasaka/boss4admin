@@ -439,10 +439,7 @@ const ApplicationDetails = () => {
                         <Label for="type">Student Type:</Label>
                         <p>{selectedType}</p>
                       </FormGroup>
-                      <FormGroup>
-                        <Label for="type">Academic Degree:</Label>
-                        <p>{academicDegree}</p>
-                      </FormGroup>
+                    
                       <FormGroup>
                         <Label for="type">Semester:</Label>
                         <p>{semester}</p>
@@ -639,7 +636,7 @@ const ApplicationDetails = () => {
                 </Button>
               </Form>
               <hr />
-              <h5>Initial Acceptances:</h5>
+             
               <Table responsive>
                 <thead>
                   <tr>
@@ -683,7 +680,7 @@ const ApplicationDetails = () => {
                 </Button>
               </Form>
               <hr />
-              <h5>Final Acceptances:</h5>
+           
               <Table responsive>
                 <thead>
                   <tr>
