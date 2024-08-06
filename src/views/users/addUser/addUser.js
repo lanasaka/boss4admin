@@ -24,12 +24,11 @@ const AddUser = () => {
     company: ''
   });
 
-
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setLogoFile(file);
+    setLogoFile(file || null); // Set logoFile to null if no file is selected
   };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,7 +37,6 @@ const AddUser = () => {
       [name]: value
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -48,13 +46,15 @@ const AddUser = () => {
       formDataObj.append('role', formData.role);
       formDataObj.append('password', formData.password);
       formDataObj.append('company', formData.company);
-      formDataObj.append('logo', logoFile);
+      if (logoFile) {
+        formDataObj.append('logo', logoFile);
+      }
       
       const response = await fetch('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/users', {
         method: 'POST',
         body: formDataObj
       });
-
+  
       if (response.ok) {
         console.log('User added successfully');
         setFormData({
@@ -75,6 +75,7 @@ const AddUser = () => {
       console.error('Error adding user', error);
     }
   };
+  
 
   return (
     <div className="min-vh-100 d-flex align-items-start justify-content-center bg-light" style={{ paddingTop: '10px' }}>

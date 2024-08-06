@@ -50,10 +50,11 @@ const AdminShowApps = () => {
         toast.error('Failed to delete application');
       }
     } catch (error) {
-      console.error('Error deleting application:', error);
+      console.error('Error deleting application:', error.response ? error.response.data : error.message);
       toast.error('Error deleting application. Please try again later.');
     }
   };
+  
 
   const getButtonConfig = (application) => {
     switch (application.appType) {

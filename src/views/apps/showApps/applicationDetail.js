@@ -148,16 +148,7 @@ const ApplicationDetails = () => {
     fetchApplicationDetails();
   }, [appId]);
 
-  const fetchOfferLetters = async () => {
-    try {
-      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/offer-letters/${appId}`);
-      const data = await response.json();
-      setOfferLetters(data);
-    } catch (error) {
-      console.error('Error fetching offer letters:', error);
-      // Handle error as needed
-    }
-  };
+ 
   const fetchAcademicDetails = async () => {
     try {
       const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/application-details`);
@@ -189,17 +180,30 @@ const ApplicationDetails = () => {
     setFinalLetterName(file.name);
   };
 
+
+
+  const fetchOfferLetters = async () => {
+    try {
+      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/offer-letters/${appId}`);
+      const data = await response.json();
+      setOfferLetters(data);
+    } catch (error) {
+      console.error('Error fetching offer letters:', error);
+      toast.error('Error fetching offer letters. Please try again later.');
+    }
+  };
+
   const uploadOfferLetter = async () => {
     if (!offerLetterFile || !offerLetterName) {
       toast.error('Please select a file to upload.');
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('file', offerLetterFile);
     formData.append('application_id', appId);
     formData.append('offer_letter_name', offerLetterName);
-  
+
     try {
       const response = await fetch('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/offer-letters', {
         method: 'POST',
@@ -208,16 +212,37 @@ const ApplicationDetails = () => {
       if (!response.ok) {
         throw new Error('Failed to upload offer letter.');
       }
-      
+
       toast.success('Offer letter uploaded successfully.');
       fetchOfferLetters(); // Refresh offer letters after successful upload
-      setAppType('offer'); // Update appType to 'offer'
-      await updateAppType('offer'); // Ensure the server is updated
     } catch (error) {
       console.error('Error uploading offer letter:', error);
       toast.error('Error uploading offer letter. Please try again later.');
     }
   };
+
+  const downloadOfferLetter = async (offerLetterPath) => {
+    if (!offerLetterPath) {
+      toast.warn('Offer letter path is empty.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/download/${offerLetterPath}`);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', offerLetterPath.split('/').pop());
+      document.body.appendChild(link);
+      link.click();
+      toast.success(`Offer letter ${offerLetterPath.split('/').pop()} downloaded successfully.`);
+    } catch (error) {
+      console.error('Error downloading offer letter:', error);
+      toast.error('Error downloading offer letter. Please try again later.');
+    }
+  };
+
   
   const uploadFinalLetter = async () => {
     if (!finalLetterFile || !finalLetterName) {
@@ -295,27 +320,7 @@ const ApplicationDetails = () => {
     }
   };
 
-  const downloadOfferLetter = async (offerLetterPath) => {
-    if (!offerLetterPath) {
-      toast.warn('Offer letter path is empty.');
-      return;
-    }
-
-    try {
-      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/download/${offerLetterPath}`);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', offerLetterPath.split('/').pop());
-      document.body.appendChild(link);
-      link.click();
-      toast.success(`Offer letter ${offerLetterPath.split('/').pop()} downloaded successfully.`);
-    } catch (error) {
-      console.error('Error downloading offer letter:', error);
-      toast.error('Error downloading offer letter. Please try again later.');
-    }
-  };
+ 
 
   const handleInputChange = (e, fieldName) => {
     const { value } = e.target;
