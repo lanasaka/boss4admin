@@ -4,11 +4,12 @@ import { Container, Row, Col, Card, CardBody, Form, FormGroup, Label, Input, But
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 
+
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ChatComponent from './ChatComponent'; // Import ChatComponent
 import './ApplicationDetails.css';
-import { faDownload, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faUpload ,faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 
 
 const getFileUrl = (fileName) => `https://boss4edu.com/uploads/${fileName}`;
@@ -85,6 +86,28 @@ const ApplicationDetails = () => {
       toast.error('Error uploading file. Please try again later.');
     }
   };
+  const deleteExtraFile = async (fileId, filePath) => {
+    try {
+      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/extra-files/${fileId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete file.');
+      }
+  
+      // Optionally delete the file from the server if needed
+       await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/delete-file/${filePath}`, {
+         method: 'DELETE',
+       });
+  
+      toast.success('File deleted successfully.');
+      fetchFiles(); // Refresh file list after deletion
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      toast.error('Error deleting file. Please try again later.');
+    }
+  };
+  
   const downloadExtraFile = async (filePath) => {
     if (!filePath) {
       toast.warn('File path is empty.');
@@ -190,17 +213,7 @@ const ApplicationDetails = () => {
     }
   };
   
-  const fetchFinalLetters = async () => {
-    try {
-      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/final-letters/${appId}`);
-      const data = await response.json();
-      setFinalLetters(data);
-    } catch (error) {
-      console.error('Error fetching offer letters:', error);
-      // Handle error as needed
-    }
-  };
-
+ 
  const handleFileChange = (e) => {
     const file = e.target.files[0];
     setOfferLetterFile(file);
@@ -217,8 +230,8 @@ const ApplicationDetails = () => {
       const data = await response.json();
       setOfferLetters(data);
     } catch (error) {
-      console.error('Error fetching offer letters:', error);
-      toast.error('Error fetching offer letters. Please try again later.');
+      console.error('Error fetching Initial Acceptance:', error);
+      toast.error('Error fetchingInitial Acceptance. Please try again later.');
     }
   };
 
@@ -239,20 +252,20 @@ const ApplicationDetails = () => {
         body: formData,
       });
       if (!response.ok) {
-        throw new Error('Failed to upload offer letter.');
+        throw new Error('Failed to upload Initial Acceptance .');
       }
 
       toast.success('Offer letter uploaded successfully.');
       fetchOfferLetters(); // Refresh offer letters after successful upload
     } catch (error) {
-      console.error('Error uploading offer letter:', error);
-      toast.error('Error uploading offer letter. Please try again later.');
+      console.error('Error uploading Initial Acceptance:', error);
+      toast.error('Error uploading Initial Acceptance. Please try again later.');
     }
   };
 
   const downloadOfferLetter = async (offerLetterPath) => {
     if (!offerLetterPath) {
-      toast.warn('Offer letter path is empty.');
+      toast.warn('Initial Acceptance path is empty.');
       return;
     }
 
@@ -265,14 +278,24 @@ const ApplicationDetails = () => {
       link.setAttribute('download', offerLetterPath.split('/').pop());
       document.body.appendChild(link);
       link.click();
-      toast.success(`Offer letter ${offerLetterPath.split('/').pop()} downloaded successfully.`);
+      toast.success(`Initial Acceptance ${offerLetterPath.split('/').pop()} downloaded successfully.`);
     } catch (error) {
-      console.error('Error downloading offer letter:', error);
-      toast.error('Error downloading offer letter. Please try again later.');
+      console.error('Error downloading Initial Acceptance:', error);
+      toast.error('Error downloading Initial Acceptance. Please try again later.');
     }
   };
 
-  
+  const fetchFinalLetters = async () => {
+    try {
+      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/final-letters/${appId}`);
+      const data = await response.json();
+      setFinalLetters(data);
+    } catch (error) {
+      console.error('Error fetching Final Acceptance:', error);
+      // Handle error as needed
+    }
+  };
+
   const uploadFinalLetter = async () => {
     if (!finalLetterFile || !finalLetterName) {
       toast.error('Please select a file to upload.');
@@ -302,30 +325,23 @@ const ApplicationDetails = () => {
       toast.error('Error uploading final letter. Please try again later.');
     }
   };
-  
-  const updateAppType = async (newType) => {
+  const deleteFinalLetter = async (letterId) => {
     try {
-      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${appId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ appType: newType }),
+      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/final-letters/${letterId}`, {
+        method: 'DELETE',
       });
-  
       if (!response.ok) {
-        throw new Error('Failed to update application type.');
+        throw new Error('Failed to delete final letter.');
       }
   
-      toast.success('Application type updated successfully.');
+      toast.success('Final letter deleted successfully.');
+      fetchFinalLetters(); // Refresh the final letters list after deletion
     } catch (error) {
-      console.error('Error updating application type:', error);
-      toast.error('Error updating application type. Please try again later.');
+      console.error('Error deleting final letter:', error);
+      toast.error('Error deleting final letter. Please try again later.');
     }
   };
   
-  
-
 
   const downloadFinalLetter = async (finalLetterPath) => {
     if (!finalLetterPath) {
@@ -349,7 +365,50 @@ const ApplicationDetails = () => {
     }
   };
 
- 
+  const updateAppType = async (newType) => {
+    try {
+      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${appId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ appType: newType }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update application type.');
+      }
+  
+      toast.success('Application type updated successfully.');
+    } catch (error) {
+      console.error('Error updating application type:', error);
+      toast.error('Error updating application type. Please try again later.');
+    }
+  };
+  
+  const deleteOfferLetter = async (offerLetterId) => {
+    if (!offerLetterId) {
+      toast.error('Offer letter ID is required for deletion.');
+      return;
+    }
+  
+    try {
+      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/offer-letters/${offerLetterId}`, {
+        method: 'DELETE',
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to delete Initial Acceptance.');
+      }
+  
+      toast.success('Initial Acceptance deleted successfully.');
+      fetchOfferLetters(); // Refresh the offer letters list after deletion
+    } catch (error) {
+      console.error('Error deleting Initial Acceptance:', error);
+      toast.error('Error deleting Initial Acceptance. Please try again later.');
+    }
+  };
+  
 
   const handleInputChange = (e, fieldName) => {
     const { value } = e.target;
@@ -655,6 +714,11 @@ const ApplicationDetails = () => {
                 onClick={() => downloadExtraFile(file.file_path)}
                 style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }}
               />
+                 <FontAwesomeIcon
+          icon={faTrashAlt}
+          onClick={() => deleteExtraFile(file.id, file.file_path)}
+          style={{ cursor: 'pointer', color: '#dc3545' }}
+        />
             </td>
           </tr>
         ))}
@@ -700,6 +764,11 @@ const ApplicationDetails = () => {
                           onClick={() => downloadOfferLetter(letter.offer_letter_path)}
                           style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }}
                         />
+                          <FontAwesomeIcon
+                            icon={faTrashAlt}
+                            onClick={() => deleteOfferLetter(letter.id)}
+                            style={{ cursor: 'pointer', color: 'red' }}
+                          />
                      
                       </td>
                     </tr>
@@ -744,6 +813,11 @@ const ApplicationDetails = () => {
                           onClick={() => downloadFinalLetter(letter.final_letter_path)}
                           style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }}
                         />
+                          <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        onClick={() => deleteFinalLetter(letter.id)}
+                        style={{ cursor: 'pointer', color: '#dc3545' }}
+                      />
                      
                       </td>
                     </tr>
