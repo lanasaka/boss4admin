@@ -222,53 +222,51 @@ const ApplicationDetails = () => {
     setFinalLetterName(file.name);
   };
 
-
-
   const fetchOfferLetters = async () => {
     try {
       const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/offer-letters/${appId}`);
       const data = await response.json();
       setOfferLetters(data);
     } catch (error) {
-      console.error('Error fetching Initial Acceptance:', error);
-      toast.error('Error fetchingInitial Acceptance. Please try again later.');
+      console.error('Error fetching offer letters:', error);
+      toast.error('Error fetching offer letters. Please try again later.');
     }
   };
-
+  
   const uploadOfferLetter = async () => {
     if (!offerLetterFile || !offerLetterName) {
       toast.error('Please select a file to upload.');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('file', offerLetterFile);
     formData.append('application_id', appId);
     formData.append('offer_letter_name', offerLetterName);
-
+  
     try {
       const response = await fetch('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/offer-letters', {
         method: 'POST',
         body: formData,
       });
       if (!response.ok) {
-        throw new Error('Failed to upload Initial Acceptance .');
+        throw new Error('Failed to upload offer letter.');
       }
-
+  
       toast.success('Offer letter uploaded successfully.');
       fetchOfferLetters(); // Refresh offer letters after successful upload
     } catch (error) {
-      console.error('Error uploading Initial Acceptance:', error);
-      toast.error('Error uploading Initial Acceptance. Please try again later.');
+      console.error('Error uploading offer letter:', error);
+      toast.error('Error uploading offer letter. Please try again later.');
     }
   };
-
+  
   const downloadOfferLetter = async (offerLetterPath) => {
     if (!offerLetterPath) {
-      toast.warn('Initial Acceptance path is empty.');
+      toast.warn('Offer letter path is empty.');
       return;
     }
-
+  
     try {
       const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/download/${offerLetterPath}`);
       const blob = await response.blob();
@@ -278,13 +276,13 @@ const ApplicationDetails = () => {
       link.setAttribute('download', offerLetterPath.split('/').pop());
       document.body.appendChild(link);
       link.click();
-      toast.success(`Initial Acceptance ${offerLetterPath.split('/').pop()} downloaded successfully.`);
+      toast.success(`Offer letter ${offerLetterPath.split('/').pop()} downloaded successfully.`);
     } catch (error) {
-      console.error('Error downloading Initial Acceptance:', error);
-      toast.error('Error downloading Initial Acceptance. Please try again later.');
+      console.error('Error downloading offer letter:', error);
+      toast.error('Error downloading offer letter. Please try again later.');
     }
   };
-
+  
   const fetchFinalLetters = async () => {
     try {
       const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/final-letters/${appId}`);
@@ -733,52 +731,49 @@ const ApplicationDetails = () => {
       case 'initial-acceptance':
         return (
           <div className="application-details">
-        
-            <div className="tab-pane fade show active" id="initial-acceptance" role="tabpanel" aria-labelledby="initial-acceptance-tab">
-              <h4>Initial Acceptance</h4>
-              <Form>
-                <FormGroup>
-                
-                  <Input type="file" name="file" id="offerLetterFile" onChange={handleFileChange} />
-                </FormGroup>
-                <Button color="primary" onClick={uploadOfferLetter}>
-                  <FontAwesomeIcon icon={faUpload} /> Upload Initial Acceptance
-                </Button>
-              </Form>
-              <hr />
-             
-              <Table responsive>
-                <thead>
-                  <tr>
-                    <th>Initial Acceptance Name</th>
-                    <th>Action</th>
+          <div className="tab-pane fade show active" id="initial-acceptance" role="tabpanel" aria-labelledby="initial-acceptance-tab">
+            <h4>Initial Acceptance</h4>
+            <Form>
+              <FormGroup>
+                <Input type="file" name="file" id="offerLetterFile" onChange={handleFileChange} />
+              </FormGroup>
+              <Button color="primary" onClick={uploadOfferLetter}>
+                <FontAwesomeIcon icon={faUpload} /> Upload Initial Acceptance
+              </Button>
+            </Form>
+            <hr />
+            <Table responsive>
+              <thead>
+                <tr>
+                  <th>Initial Acceptance Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {offerLetters.map((letter) => (
+                  <tr key={letter.id}>
+                    <td>{letter.offer_letter_name}</td>
+                    <td>
+                      <a
+                        href={`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/download/${letter.offer_letter_path}`}
+                        download
+                        style={{ marginRight: '10px' }}
+                      >
+                        <FontAwesomeIcon icon={faDownload} style={{ cursor: 'pointer', color: '#007bff' }} />
+                      </a>
+                      <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        onClick={() => deleteOfferLetter(letter.id)}
+                        style={{ cursor: 'pointer', color: 'red' }}
+                      />
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {offerLetters.map((letter) => (
-                    <tr key={letter.id}>
-                      <td>{letter.offer_letter_name}</td>
-                      <td>
-                        <FontAwesomeIcon
-                          icon={faDownload}
-                          onClick={() => downloadOfferLetter(letter.offer_letter_path)}
-                          style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }}
-                        />
-                          <FontAwesomeIcon
-                            icon={faTrashAlt}
-                            onClick={() => deleteOfferLetter(letter.id)}
-                            style={{ cursor: 'pointer', color: 'red' }}
-                          />
-                     
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-  
+                ))}
+              </tbody>
+            </Table>
+          </div>
         </div>
-        );
+      );
       case 'final-acceptance':
         return (
           <div className="application-details">
