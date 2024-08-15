@@ -728,48 +728,35 @@ const ApplicationDetails = () => {
           
         </div>
         );
-      case 'initial-acceptance':
-        return (
-          <div className="application-details">
-          <div className="tab-pane fade show active" id="initial-acceptance" role="tabpanel" aria-labelledby="initial-acceptance-tab">
-            <h4>Initial Acceptance</h4>
-            <Form>
-              <FormGroup>
-                <Input type="file" name="file" id="offerLetterFile" onChange={handleFileChange} />
-              </FormGroup>
-              <Button color="primary" onClick={uploadOfferLetter}>
-                <FontAwesomeIcon icon={faUpload} /> Upload Initial Acceptance
-              </Button>
-            </Form>
-            <hr />
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th>Initial Acceptance Name</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {offerLetters.map((letter) => (
-                  <tr key={letter.id}>
-                    <td>{letter.offer_letter_name}</td>
-                    <td>
-                    <a href={`https://boss4edu-a37be3e5a8d0.herokuapp.com${offer_letter_path}`} download>
-                  Download Offer Letter
-                </a>
-                      <FontAwesomeIcon
-                        icon={faTrashAlt}
-                        onClick={() => deleteOfferLetter(letter.id)}
-                        style={{ cursor: 'pointer', color: 'red' }}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        </div>
-      );
+        case 'initial-acceptance':
+          return (
+            <div className="application-details">
+              <div className="tab-pane fade show active" id="initial-acceptance" role="tabpanel" aria-labelledby="initial-acceptance-tab">
+                <h4>Initial Acceptance</h4>
+                <hr />
+                <Table responsive>
+                  <thead>
+                    <tr>
+                      <th>Initial Acceptance Name</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {offerLetters.map((letter) => (
+                      <tr key={letter.id}>
+                        <td>{letter.offer_letter_name}</td>
+                        <td>
+                          <a href={`https://boss4edu-a37be3e5a8d0.herokuapp.com${letter.offer_letter_path}`} download>
+                            Download Offer Letter
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            </div>
+          );
       case 'final-acceptance':
         return (
           <div className="application-details">
