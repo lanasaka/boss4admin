@@ -754,13 +754,9 @@ const ApplicationDetails = () => {
                   <tr key={letter.id}>
                     <td>{letter.offer_letter_name}</td>
                     <td>
-                      <a
-                        href={`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/download/${letter.offer_letter_path}`}
-                        download
-                        style={{ marginRight: '10px' }}
-                      >
-                        <FontAwesomeIcon icon={faDownload} style={{ cursor: 'pointer', color: '#007bff' }} />
-                      </a>
+                    <a href={`https://boss4edu-a37be3e5a8d0.herokuapp.com${offer_letter_path}`} download>
+                  Download Offer Letter
+                </a>
                       <FontAwesomeIcon
                         icon={faTrashAlt}
                         onClick={() => deleteOfferLetter(letter.id)}
