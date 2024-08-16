@@ -455,6 +455,7 @@ const ApplicationDetails = () => {
       toast.warn('Cannot download empty file.');
     }
   };
+  
   const handleAppTypeChange = (newAppType) => {
     setAppType(newAppType);
   };
@@ -799,11 +800,9 @@ const ApplicationDetails = () => {
                     <tr key={letter.id}>
                       <td>{letter.final_letter_name}</td>
                       <td>
-                        <FontAwesomeIcon
-                          icon={faDownload}
-                          onClick={() => downloadFinalLetter(letter.final_letter_path)}
-                          style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }}
-                        />
+                       <a href={`https://boss4edu-a37be3e5a8d0.herokuapp.com${letter.final_letter_path}`} download>
+                            Download Offer Letter
+                          </a>
                           <FontAwesomeIcon
                         icon={faTrashAlt}
                         onClick={() => deleteFinalLetter(letter.id)}
