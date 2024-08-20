@@ -53,6 +53,8 @@ const ApplicationDetails = () => {
   const [finalLetterName, setFinalLetterName] = useState('');
   const [finalLetters, setFinalLetters] = useState([]);
 
+
+  console.log("appId in ParentComponent:", appId); // Debugging
   const handleFileChange2 = (e) => {
     const file = e.target.files[0];
     setOtherFile(file);
@@ -573,9 +575,9 @@ const ApplicationDetails = () => {
                   </CardBody>
                 </Card>
               </Col>
-              {/* <Col md="6">
-                <ChatComponent />
-              </Col> */}
+               <Col md="6">
+               <ChatComponent applicationId={appId} />
+              </Col> 
             </Row>
           </div>
         );

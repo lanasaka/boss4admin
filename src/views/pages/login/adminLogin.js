@@ -19,16 +19,26 @@ import CIcon from '@coreui/icons-react';
 import { cilLockLocked, cilUser } from '@coreui/icons';
 import logo from '../../../assets/Boss4 Student logo_1.png';
 
-const Login = () => {
+const AdminLogin = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
+    // Check if the provided username and password match the admin credentials
     if (username === 'adminBoss4' && password === 'boss4eduadmin123') {
-      localStorage.setItem('user', JSON.stringify({ username }));
+      // Store user data in local storage with dynamic username and role
+      const user = { username, role: 'admin' };
+      localStorage.setItem('admin', JSON.stringify(user));
+      
+      // Log the actual username and role to the console
+      console.log('Logged in as:', user.username);
+      console.log('Role:', user.role);
+  
+      // Redirect to the dashboard
       navigate('/dashboard');
     } else {
+      // Show an error message if credentials are incorrect
       toast.error('Incorrect username or password');
     }
   };
@@ -77,9 +87,6 @@ const Login = () => {
                           Login
                         </CButton>
                       </CCol>
-                      <CCol xs={6} className="text-right">
-                        {/* Optional content for the right column */}
-                      </CCol>
                     </CRow>
                   </CForm>
                 </CCardBody>
@@ -103,4 +110,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;
