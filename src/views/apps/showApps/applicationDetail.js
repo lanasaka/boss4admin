@@ -4,7 +4,7 @@ import { Container, Row, Col, Card, CardBody, Form, FormGroup, Label, Input, But
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 
-
+import AppHeaderDropdown from '../../../components/header/AppHeaderDropdown'; // Adjust the import path as needed
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ChatComponent from './ChatComponent'; // Import ChatComponent
@@ -53,6 +53,9 @@ const ApplicationDetails = () => {
   const [finalLetterName, setFinalLetterName] = useState('');
   const [finalLetters, setFinalLetters] = useState([]);
 
+  const [messages, setMessages] = useState([]);
+  const [notification, setNotification] = useState('');
+
 
   console.log("appId in ParentComponent:", appId); // Debugging
   const handleFileChange2 = (e) => {
@@ -61,6 +64,8 @@ const ApplicationDetails = () => {
     setOtherFileName(file.name);
   };
   
+
+
   const uploadExtraFile = async () => {
     if (!otherFile) {
       toast.error('Please select a file.');
@@ -509,6 +514,7 @@ const ApplicationDetails = () => {
         return (
           <div>
             <Row>
+        
               <Col md="6">
                 <Card>
                 <Button color={buttonConfig[appType]?.color || 'secondary'} size="lg">
