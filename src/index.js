@@ -11,7 +11,7 @@ import { NotificationProvider } from './NotificationContext'; // Import Notifica
 
 const logUnreadMessages = async () => {
   try {
-    const response = await fetch('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/chats/unread');
+    const response = await fetch('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/chats/unread/user');
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
