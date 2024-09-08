@@ -144,6 +144,7 @@ const AdminShowApps = () => {
         <thead style={{ backgroundColor: '#28a745', color: 'white' }}>
           <tr>
             <th>#</th>
+            <th>Application Code</th>
             <th>Name</th>
             <th>Nationality</th>
             <th>Email</th>
@@ -164,6 +165,7 @@ const AdminShowApps = () => {
               }}
             >
               <th scope="row">{index + 1}</th>
+              <td>{app.applicationCode}</td>
               <td>{app.name}</td>
               <td>{app.nationality}</td>
               <td>{app.email}</td>

@@ -28,10 +28,15 @@ const NewApp = () => {
     highSchoolTranscript: null,
     highSchoolTranscriptEnglish: null,
     extraFile: null,
-    extraFileName: ''
+    extraFileName: '',
+    applicationCode: '' 
   });
 
   const [activeTab, setActiveTab] = useState('personal');
+  // Function to generate a unique application code
+  const generateApplicationCode = () => {
+    return `#ST-${Date.now()}`; // Simple example: timestamp-based code
+  };
 
   const handleFileChange = (event, fieldName) => {
     setFormData({
@@ -44,14 +49,20 @@ const NewApp = () => {
 
   const handleApplicationSubmit = async () => {
     try {
+      const applicationCode = generateApplicationCode();
       const formDataToSend = new FormData();
       for (const key in formData) {
         formDataToSend.append(key, formData[key]);
       }
+      formDataToSend.append('applicationCode', applicationCode);
   
       const response = await Axios.post('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications', formDataToSend);
       const { id } = response.data;
       setApplicationId(id);
+      setFormData({
+        ...formData,
+        applicationCode // Set application code in form data state
+      });
       alert('Application submitted successfully!');
       goToUniversityTab();
     } catch (error) {
@@ -72,9 +83,10 @@ const NewApp = () => {
         application_id: applicationId, // Ensure applicationId is included
         academic_degree: formData.academicDegree,
         university: formData.university,
-        program: formData.program
+        program: formData.program,
+        application_code: formData.applicationCode // Include application code
       };
-  
+
       const url = 'https://boss4edu-a37be3e5a8d0.herokuapp.com/api/application-details';
       await Axios.post(url, dataToSend, {
         headers: {
@@ -177,49 +189,6 @@ const fetchPrograms = (universityId, academicDegree) => {
     });
   };
 
-  // Function to handle specific input changes that require uppercasing
-  const handleInputChange2 = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value.toUpperCase()
-    });
-  };
-
-  // Function to handle changes in semester selection
-  const handleSemesterChange = (e) => {
-    const selectedSemester = e.target.value;
-    setFormData({
-      ...formData,
-      semester: selectedSemester
-    });
-  };
-
-  const resetForm = () => {
-    setFormData({
-      name: '',
-      passportNumber: '',
-      email: '',
-      phoneNumber: '',
-      nationality: '',
-      countryResidence: '',
-      type: '',
-      academicDegree: '',
-      semester: '',
-      university: '',
-      program: '',
-      passportPhoto: null,
-      personalPhoto: null,
-      highSchoolCertificate: null,
-      highSchoolCertificateEnglish: null,
-      highSchoolTranscript: null,
-      highSchoolTranscriptEnglish: null,
-      extraFile: null,
-      extraFileName: ''
-    });
-    // Do not reset applicationId here
-  };
-  
 
   // Function to navigate to Documents tab
   const goToDocumentsTab = () => {

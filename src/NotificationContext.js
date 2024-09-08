@@ -9,7 +9,7 @@ export const NotificationProvider = ({ children }) => {
   const fetchApplicationName = async (applicationId) => {
     try {
       const response = await axios.get(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/applications/${applicationId}`);
-      return response.data.name || 'Unknown Application';
+      return response.data.applicationCode || 'Unknown Application';
     } catch (error) {
       console.error('Error fetching application name:', error);
       return 'Unknown Application';
@@ -29,7 +29,7 @@ export const NotificationProvider = ({ children }) => {
    
   
       const notificationsWithAppName = await Promise.all(userMessages.map(async (message) => {
-        const applicationName = await fetchApplicationName(message.applicationId);
+        const applicationCode = await fetchApplicationName(message.applicationId);
      
   
         return {
@@ -37,7 +37,7 @@ export const NotificationProvider = ({ children }) => {
           messageId: message.id,
           sender: message.sender,
           applicationId: message.applicationId,
-          applicationName, // Include the application name
+          applicationCode, // Include the application name
           read: message.isRead === 1,
         };
       }));
