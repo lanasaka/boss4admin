@@ -55,9 +55,10 @@ const UpdatesDropdown = ({ isOpen, toggleDropdown }) => {
         <CIcon icon={cilBell} size="lg" className="text-gray-700 ml-8" />
       </CDropdownToggle>
       <CDropdownMenu className="dropdown-menu-right">
-        {unseenFiles.length > 0 && (
+        <CDropdownHeader>Updates</CDropdownHeader>
+
+        {unseenFiles.length > 0 ? (
           <>
-            <CDropdownHeader>Updates</CDropdownHeader>
             {unseenFiles.map((file) => (
               <CDropdownItem key={file.id}>
                 <Link
@@ -70,6 +71,9 @@ const UpdatesDropdown = ({ isOpen, toggleDropdown }) => {
               </CDropdownItem>
             ))}
           </>
+        ) : (
+          // When there are no updates
+          <CDropdownItem>No Updates</CDropdownItem>
         )}
       </CDropdownMenu>
     </CDropdown>
