@@ -15,6 +15,7 @@ import {
 import { AppBreadcrumb } from './index';
 import AppHeaderDropdown from './header/AppHeaderDropdown';
 import NotificationDropdown from '../NotificationDropdown';
+import UpdatesDropdown from '../UpdatesDropdown';
 
 const AppHeader = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -56,11 +57,20 @@ const AppHeader = () => {
         </CHeaderNav>
 
         <CHeaderNav>
+
+        <CNavItem>
+            <CNavLink href="#" ref={dropdownRef}>
+              <UpdatesDropdown isOpen={isDropdownOpen} toggleDropdown={toggleDropdown} />
+            </CNavLink>
+          </CNavItem>
+          
           <CNavItem>
             <CNavLink href="#" ref={dropdownRef}>
               <NotificationDropdown isOpen={isDropdownOpen} toggleDropdown={toggleDropdown} />
             </CNavLink>
           </CNavItem>
+
+        
         </CHeaderNav>
 
         <CHeaderNav className="ms-6">

@@ -95,7 +95,7 @@ const AdminShowApps = () => {
             <Col md={6}>
               <Row form>
                 <Col md={6} className="mb-3">
-                  <label className="mr-2">Filter by Application Type:</label>
+                  <label className="mr-2">Filter by Application Status:</label>
                   <Input
                     type="select"
                     value={applicationTypeFilter}
@@ -151,7 +151,7 @@ const AdminShowApps = () => {
             <th>Semester</th>
             <th>User Name</th>
             <th>Company</th>
-            <th>Application Type</th>
+            <th>Application Status</th>
             <th>Actions</th>
           </tr>
         </thead>

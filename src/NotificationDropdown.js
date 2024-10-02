@@ -6,7 +6,7 @@ import {
   CDropdownMenu,
   CDropdownToggle,
 } from '@coreui/react';
-import { cilBell } from '@coreui/icons';
+import { cilEnvelopeClosed } from '@coreui/icons'; // Use cilEnvelopeClosed as the message icon
 import CIcon from '@coreui/icons-react';
 import { useNotification } from './NotificationContext';
 import { Link } from 'react-router-dom';
@@ -54,10 +54,10 @@ const NotificationDropdown = ({ isOpen, toggleDropdown }) => {
             {notificationCount}
           </span>
         )}
-        <CIcon icon={cilBell} size="lg" className="text-gray-700 ml-8" />
+        <CIcon icon={cilEnvelopeClosed} size="lg" className="text-gray-700 ml-8" /> {/* Updated to cilEnvelopeClosed */}
       </CDropdownToggle>
       <CDropdownMenu className="dropdown-menu-right">
-        <CDropdownHeader>Notifications</CDropdownHeader>
+        <CDropdownHeader>Messages</CDropdownHeader> {/* Changed from Notifications to Messages */}
         {unreadUserNotifications.length > 0 ? (
           unreadUserNotifications.map((notif, index) => (
             <Link
@@ -79,7 +79,7 @@ const NotificationDropdown = ({ isOpen, toggleDropdown }) => {
             </Link>
           ))
         ) : (
-          <CDropdownItem>No new notifications</CDropdownItem>
+          <CDropdownItem>No new messages</CDropdownItem> 
         )}
       </CDropdownMenu>
     </CDropdown>

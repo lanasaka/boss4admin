@@ -8,19 +8,41 @@ import store from './store';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { NotificationProvider } from './NotificationContext'; // Import NotificationProvider
+import { UpdateProvider } from './UpdateContext'; // Import UpdateProvider
+import axios from 'axios';
 
-const logUnreadMessages = async () => {
+// Function to fetch unseen files where sender is 'user'
+const fetchUnseenFiles = async () => {
   try {
-    const response = await fetch('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/chats/unread/user');
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const data = await response.json();
-    // Filter messages where sender is 'user'
-    const userMessages = data.messages.filter(message => message.sender === 'user');
-    console.log('Unread Messages from Users:', userMessages);
+    const response = await axios.get('https://boss4edu-a37be3e5a8d0.herokuapp.com/extra-files/un-seen');
+    return response.data;
   } catch (error) {
-    console.error('Error fetching unread messages:', error);
+    console.error('Error fetching unseen files:', error);
+    return [];
+  }
+};
+
+// Function to mark a file as seen
+const markFileAsSeen = async (fileId) => {
+  try {
+    await axios.put(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/extra-files/${fileId}/seen`);
+  } catch (error) {
+    console.error('Error marking file as seen:', error);
+  }
+};
+
+// Log unseen files before rendering the app
+const logUnseenFiles = async () => {
+  try {
+    const unseenFiles = await fetchUnseenFiles();
+    console.log('Unseen Extra Files from User:', unseenFiles);
+
+    // Optionally mark them as seen
+    for (const file of unseenFiles) {
+      await markFileAsSeen(file.id);
+    }
+  } catch (error) {
+    console.error('Error logging unseen files:', error);
   }
 };
 
@@ -47,12 +69,14 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Fetch and log unread messages before rendering the app
-logUnreadMessages().then(() => {
+// Fetch and log unseen files before rendering the app
+logUnseenFiles().then(() => {
   createRoot(document.getElementById('root')).render(
     <Provider store={store}>
       <NotificationProvider>
-        <App />
+        <UpdateProvider> 
+          <App />
+        </UpdateProvider>
         <ToastContainer />
       </NotificationProvider>
     </Provider>

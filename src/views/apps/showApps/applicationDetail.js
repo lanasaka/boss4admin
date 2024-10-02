@@ -65,7 +65,7 @@ const ApplicationDetails = () => {
     setOtherFileName(file.name);
   };
   
-
+  
 
   const uploadExtraFile = async () => {
     if (!otherFile) {
@@ -77,6 +77,7 @@ const ApplicationDetails = () => {
     formData.append('file', otherFile);
     formData.append('application_id', appId);
     formData.append('file_name', otherFileName);
+    formData.append('sender', 'admin'); // Automatically set sender to "user"
   
     try {
       const response = await fetch('https://boss4edu-a37be3e5a8d0.herokuapp.com/api/extra-file', {
@@ -92,27 +93,6 @@ const ApplicationDetails = () => {
     } catch (error) {
       console.error('Error uploading file:', error);
       toast.error('Error uploading file. Please try again later.');
-    }
-  };
-  const deleteExtraFile = async (fileId, filePath) => {
-    try {
-      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/extra-files/${fileId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete file.');
-      }
-  
-      // Optionally delete the file from the server if needed
-       await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/delete-file/${filePath}`, {
-         method: 'DELETE',
-       });
-  
-      toast.success('File deleted successfully.');
-      fetchFiles(); // Refresh file list after deletion
-    } catch (error) {
-      console.error('Error deleting file:', error);
-      toast.error('Error deleting file. Please try again later.');
     }
   };
   
@@ -401,10 +381,10 @@ const ApplicationDetails = () => {
         throw new Error('Failed to update application type.');
       }
   
-      toast.success('Application type updated successfully.');
+      toast.success('Application status updated successfully.');
     } catch (error) {
-      console.error('Error updating application type:', error);
-      toast.error('Error updating application type. Please try again later.');
+      console.error('Error updating application status:', error);
+      toast.error('Error updating application status. Please try again later.');
     }
   };
   
@@ -509,6 +489,31 @@ const ApplicationDetails = () => {
       toast.error('Error saving application details. Please try again later.');
     }
   };
+
+  const markAsSeen = async (fileId) => {
+    console.log(`Marking file ${fileId} as seen...`);
+    try {
+      const response = await fetch(`https://boss4edu-a37be3e5a8d0.herokuapp.com/api/extra-files/${fileId}/seen`, {
+        method: 'PUT',
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      console.log(`File ${fileId} marked as seen.`);
+    } catch (error) {
+      console.error('Error marking file as seen:', error);
+    }
+  };
+  
+  useEffect(() => {
+    console.log('Files:', files); // Log files to check data
+    files.forEach((file) => {
+      if (file.sender === 'user' && file.is_seen === 0) {
+        markAsSeen(file.id);
+      }
+    });
+  }, [files]);
+   
   const renderTabContent = () => {
     switch (activeTab) {
       case 'status':
@@ -563,7 +568,7 @@ const ApplicationDetails = () => {
                       </FormGroup>
                     
                       <FormGroup>
-                      <Label for="appType">Application Type:</Label>
+                      <Label for="appType">Application Status:</Label>
                       <Input
                         type="select"
                         id="appType"
